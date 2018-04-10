@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>form
+	</title>
+</head>
+<body>
+<form action="/users/courses" method="post">
+	<label>Rollno</label><br>
+	<input type="text" name="rollno" required>
+	<label>Course</label>
+	<input type="text" name="course">
+
+	<label for="meeting">Class Time : </label><input id="meeting" type="time" name="time" required /><br>
+
+<label>Please Select day</label>
+ 
+           <select class="selectpicker" data-style="btn-info" name="day">
+        <optgroup label="Select Table">
+             <option name="Monday" value = "Monday">Monday</option>
+               <option name="Tuesday" value = "Tuesday">Tuesday</option>
+               <option name="Wednesday" value = "Wednesday">Wednesday</option>
+               <option name="Thursday" value = "Thursday">Thursday</option>
+               <option name="Friday" value = "Friday">Friday</option>
+               <option name="Saturday" value = "Saturday">Saturday</option>
+               <option name="Sunday" value = "Sunday">Sunday</option>
+        </optgroup>
+    </select>
+	<input type="submit" name="submit" value="Send" required>
+</form>
+</body>
+</html>
