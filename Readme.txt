@@ -9,9 +9,9 @@ $npm install
 
 4. Now open your mongodb shell before doing that run mongodb server 
 $mongod
- and then $mongo 
- to open the mongo shell.
-
+and then run the below command to open the mongo shell
+$mongo 
+ 
  Now create database and collections in your database. 
 
  >use MyDatabase
@@ -27,4 +27,4 @@ $mongod
 
  $node index.js
 
- 
+
