@@ -193,27 +193,79 @@ app.get('/leave',function(req,res){
 });
 
 app.post('/leave',function(req,res){
+	var leave = UserDetails();
+	var a = req.body.leavetype;
+	switch (a) {
+		case 'casual':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.Casual_leave_credits.n -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'halfpay':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.Half_Pay_Credits.n -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'commute':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.comuted_earned_left -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'earned':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.earned_left -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'vacation':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.earned_left -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'no_due':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.leave_not_due_left -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'maternity':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.Maternity_leave_credit -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'paternity':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.Paternity_leave.credit -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'adoption':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.Child_Adop_Leave -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'child_care':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.Child_care_leave.credit -= req.body.number;
+				doc.save();
+			});
+			break;
+		case 'extraordinary':
+			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				doc.Extraordinary_leave.active_now -= req.body.number;
+				doc.save();
+			});
+			break;
+		default:
+			console.log ('Invalid Leave Type');
 
-	console.log('bhavana');
-	var leave=UserDetails();
-	var a= req.body.cars;
-	console.log("This is my value"+a);
-	
-	
-	var myquery= {username:"prasanth"}
-	var newvalues={$set:{"Half_Pay_Credits.0.n":"75"}}
-
-
-
-UserDetails.findOne({username:'lol'},function(err,doc){
-
-
-	doc.Half_Pay_Credits.n-=req.body.number;
-	doc.save();
-
-});
-
-
+	}
 });
 
 //Admin Login // 
