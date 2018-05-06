@@ -1,11 +1,14 @@
 const express= require ('express');
 
 const app = express();
-
+var session = require('express-session');
+var sess;
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.get('/',(req,res)=> res.sendFile('index.html',{root:__dirname}));
+
+
 
 const port = process.env.PORT || 4000;
 app.listen(port,()=> console.log('App listening on port',+port));
@@ -29,26 +32,18 @@ mongoose.connect('mongodb://localhost/MyDatabase');
 
 const Schema= mongoose.Schema;
 const Schema2=mongoose.Schema;
-const Schema3=mongoose.Schema;
-
-const UserCred= new Schema2({
-	username:String,
-	firstname:String,
-	lastname:String,
-	email:String,
-	phone:String,
-	department:String
-});
-
 
 const UserDetail = new Schema({
 
 	username:String,
 	password:String,
-	first_name:String,
+	name:String,
 	last_name:String,
 	Gender:String,
 	DOJoining: String,
+	Department:String,
+	Post_Held:String,
+	Place:String,
 	Casual_leave_credits:{
 		n:String,
 		active_now:String
@@ -75,42 +70,9 @@ const UserDetail = new Schema({
 	Extraordinary_leave:{active_now:String,Years_left:String}
 });
 
-const DummyGod= new Schema3({
 
-	username:String,
-	password:String,
-	first_name:String,
-	last_name:String,
-	Gender:String,
-	DOJoining: String,
-	Casual_leave_credits:{
-		n:String,
-		active_now:String
-	},
-	Half_Pay_Credits:{
-		n:String,
-		active_now:String
-	},
-	earned_leave:{
-		n:String,
-		active_now:String
-	},
-	comuted_earned_left:String,
-	earned_left:String,
-	vacation_leave_count:String,
-	leave_not_due_left:String,
-	Children:[{name:String,age:String,DOB:String}],
-	Num_Children:String,
-	miscarriage_leaves_left:String,
-	Maternity_leave_credit:String,
-	Paternity_leave:{credit:String,max_num:String},
-	Child_Adop_Leave:String,
-	Child_care_leave:{credit:String,max_num:String},
-	Extraordinary_leave:{active_now:String,Years_left:String}
-});
-
-const UserDetails = mongoose.model('userInfo',UserDetail,'userInfo');
-const UserCredentails = mongoose.model('staffInfo',UserCred,'staffInfo');
+const UserDetails = mongoose.model('employee',UserDetail,'employee');
+//const UserCredentails = mongoose.model('staffInfo',UserCred,'staffInfo');
 /* PASSPORT SETUP */
 
 const passport = require('Passport');
@@ -130,6 +92,7 @@ passport.serializeUser(function(id,cb){
 		cb(err,user);
 	});
 });
+
 
 
 /* Passport local authentication */
@@ -162,20 +125,39 @@ UserDetails.findOne({
 }
 	));
 
+
+
 // Staff Login //
 app.post('/login',
-passport.authenticate('local',{failureRedirect:'/error'}),
+passport.authenticate('local'),
 function(req,res){
+	var User=new UserDetails();
+	// confirm that user typed same password twice
+		if (User.password !== req.body.passwordConf) {
+				var err = new Error('Password Wrong');
+				err.status = 400;
+				res.send("password wrong");
+				return next(err);
+		}
+		else if(User.username !==req.body.Username){
+			var err = new Error('Usernames wrong');
+				err.status = 400;
+				res.send("Username wrong");
+				return next(err);
 
-	UserDetails.distinct().find({username:"prasa"},function(err,user){
+		}
+
+	else{	
+	UserDetails.distinct().find({username:req.body.username},function(err,user){
 			if(err){
                 response = {"error" : true , "message" : "No courses found under the given rollno"};
             }else{
                 response = {"error" : false , "message" : "data found"};
             }
-            res.render('details',{"Employee_database":user})
+            res.render('details',{"employee":user})
 
 	});
+}
 
 	//res.sendfile('./login_v13/index.html');
 	
@@ -361,16 +343,28 @@ app.post('/adminDashboard',function(req,res){
     //var newUser = new UserDetails();
     var response = {};
     var newUser = new UserDetails();
+
+    // confirm that user typed same password twice
+		if (newUser.username !== req.body.username) {
+				var err = new Error('Username already Exists');
+				err.status = 400;
+				res.send("Please try again username already exists");
+				return next(err);
+		}
+
+else{
         // fetch email and password from REST request.
         // Add strict validation when you use this in Production.
         newUser.username = req.body.uname;
         console.log("Please etop"+req.body.uname);
         // Hash the password using SHA1 algorithm.
         newUser.password = req.body.psw;
-        newUser.first_name="xxxxxx";
-        newUser.last_name="xxxxxxxx";
-        newUser.Gender="xxxxxxxx";
+        newUser.name="Praaa";
+        newUser.Gender="M";
         newUser.DOJoining="19-2-2016";
+        newUser.Department="CSE",
+        newUser.Post_Held="Assistant Prof",
+        newUser.Place="F402",
         newUser.Casual_leave_credits.n="5";
         newUser.Casual_leave_credits.active_now="0";
         newUser.Half_Pay_Credits.n="10";
@@ -392,7 +386,7 @@ app.post('/adminDashboard',function(req,res){
         newUser.Child_care_leave.credit="730";
         newUser.Child_care_leave.max_num="6";
         newUser.Extraordinary_leave.active_now="0";
-        newUser.	Extraordinary_leave.Years_left="5";
+        newUser.Extraordinary_leave.Years_left="5";
         console.log(newUser.username);
 
         console.log(newUser.password);
@@ -412,5 +406,8 @@ app.post('/adminDashboard',function(req,res){
         res.sendfile('./courses.html');
 
     });
+}
+
+
    });
    
