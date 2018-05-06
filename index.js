@@ -52,13 +52,12 @@ const UserDetail = new Schema({
 		halfpay:String,
 		//active_now:String
 	},
+	commuted:{count : String},
 	earned:{
 		credits:String,
 		count:String,
 		excess:String
 	},
-	commuted:{count : String}
-	earned_left:String,
 	vacation:{count:String},
 	notdue:{count:String},
 	children:[{name:String,age:String,dob:String}],
