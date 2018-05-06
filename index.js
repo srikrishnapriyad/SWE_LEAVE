@@ -1,5 +1,4 @@
 const express= require ('express');
-var popupS = require('popups');
 const app = express();
 var session = require('express-session');
 var sess;
@@ -7,8 +6,6 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.get('/',(req,res)=> res.sendFile('index.html',{root:__dirname}));
-
-
 
 const port = process.env.PORT || 4000;
 app.listen(port,()=> console.log('App listening on port',+port));
@@ -175,24 +172,47 @@ app.post('/leave', function(req,res){
 	var startdate = new Date (req.body.startdate);
 	var enddate = new Date (req.body.enddate);
 	var num_days = parseInt((enddate - startdate) / (24 * 3600 * 1000));
-
+	var success = true;
 	switch (a) {
 		case 'casual':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
 				if (doc.casual.credits - num_days < 0) {
 					// show a pop-up
+					if (!proceed) {
+						success = false;
+					}
 				}
-				doc.doc.casual.credits -= num_days;
+
+				/* Action
+				doc.casual.credits -= num_days;
 				doc.save();
+				*/
 			});
 			break;
 		case 'halfpay':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
 				if (doc.halfpay.credits - num_days < 0) {
-					// show a pop-up, not due leaves
+					// show a pop-up - it will be cut from no due
+					if (proceed) {
+						var newRequest = new Requests ();
+						newRequest.username = req.session.user.username;
+						newRequest.name = req.session.user.name;
+						newRequest.leavetype = 'nodue';
+						newRequest.startdate = startdate;
+						newRequest.enddate = enddate;
+						newRequest.comment = // textbox;
+						newRequest.save (function (err) {
+							if (err) {
+								console.log ('Your request has not been added');
+							} else {
+								console.log ('Request has been added. Please wait for admin to approve');
+							}
+						});
+					}
 				}
-				doc.halfpay.credits -= num_days;
-				doc.save();
+
+				// doc.halfpay.credits -= num_days;
+				// doc.save();
 			});
 			break;
 		case 'commute':
@@ -251,6 +271,24 @@ app.post('/leave', function(req,res){
 			break;
 		default:
 			console.log ('Invalid Leave Type');
+
+		if (success) {
+			var newRequest = new Requests ();
+			newRequest.username = req.session.user.username;
+			newRequest.name = req.session.user.name;
+			newRequest.leavetype = a;
+			newRequest.startdate = startdate;
+			newRequest.enddate = enddate;
+			newRequest.comment = // textbox;
+			newRequest.save (function (err) {
+				if (err) {
+					console.log ('Your request has not been added');
+				} else {
+					console.log ('Request has been added. Please wait for admin to approve');
+				}
+			});
+		}
+		
 
 	}
 });
