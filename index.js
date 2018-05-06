@@ -2,7 +2,6 @@ const express= require ('express');
 
 const app = express();
 var session = require('express-session');
-var sess;
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:true}));
 
