@@ -175,14 +175,19 @@ app.post('/leave', function(req,res){
 	var startdate = new Date (req.body.startdate);
 	var enddate = new Date (req.body.enddate);
 	var num_days = parseInt((enddate - startdate) / (24 * 3600 * 1000));
-	console.log(num_days);
+
+	// var result = confirm("You are requesting " + a + " leave for " + num_days + " days. Do you want to proceed?");
+	// if (result) {
+	// 	console.log ('Proceed')
+	// }
+
 	switch (a) {
 		case 'casual':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
-				if (doc.casual.credits - req.body.number < 0) {
+				if (doc.casual.credits - num_days < 0) {
 					// show a pop-up
 				}
-				doc.Casual_leave_credits.n -= req.body.number;
+				doc.doc.casual.credits -= num_days;
 				doc.save();
 			});
 			break;
