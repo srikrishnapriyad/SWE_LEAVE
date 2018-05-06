@@ -13,6 +13,8 @@ app.listen(port,()=> console.log('App listening on port',+port));
 app.set('view engine','jade');
 app.use(express.static('Login_v13'));
 
+app.use("/css", express.static(__dirname + '/public/css'));
+app.use("/css", express.static(__dirname + '/public/css'));
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js')); // redirect to bootstrap JS
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redirect JS for jQuery
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); //redirect to css bootstrap
@@ -165,13 +167,13 @@ app.post('/login',
 passport.authenticate('local',{failureRedirect:'/error'}),
 function(req,res){
 
-	UserDetails.distinct().find({username:"admin"},function(err,user){
+	UserDetails.distinct().find({username:"prasa"},function(err,user){
 			if(err){
                 response = {"error" : true , "message" : "No courses found under the given rollno"};
             }else{
                 response = {"error" : false , "message" : "data found"};
             }
-            res.render('details',{"staffInfo":user})
+            res.render('details',{"Employee_database":user})
 
 	});
 
@@ -185,7 +187,34 @@ app.get('/login',function(req,res){
 
     res.sendfile("./student.html");
 });
+app.get('/leave',function(req,res){
 
+    res.sendfile("./leave.html");
+});
+
+app.post('/leave',function(req,res){
+
+	console.log('bhavana');
+	var leave=UserDetails();
+	var a= req.body.cars;
+	console.log("This is my value"+a);
+	
+	
+	var myquery= {username:"prasanth"}
+	var newvalues={$set:{"Half_Pay_Credits.0.n":"75"}}
+
+
+
+UserDetails.findOne({username:'lol'},function(err,doc){
+
+
+	doc.Half_Pay_Credits.n-=req.body.number;
+	doc.save();
+
+});
+
+
+});
 
 //Admin Login // 
 var path = require('path');// This is used to resolve the path issues as we can not use ../ in node
@@ -279,7 +308,8 @@ app.post('/adminDashboard',function(req,res){
     var newUser = new UserDetails();
         // fetch email and password from REST request.
         // Add strict validation when you use this in Production.
-        newUser.username = req.body.uname; 
+        newUser.username = req.body.uname;
+        console.log("Please etop"+req.body.uname);
         // Hash the password using SHA1 algorithm.
         newUser.password = req.body.psw;
         newUser.first_name="xxxxxx";

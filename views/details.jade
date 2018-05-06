@@ -1,11 +1,26 @@
 doctype html
 html
-title=title
-body
- h1 My Details
-  ul
-   each user,i in staffInfo
-    li=user.username
-    li=user.first_name
-    
+ head
+  link(href='/css/jade_style.css', rel='stylesheet')
+  style
+   li{padding:100px;color:yellow}
+ title=title
+ body
+  h1 My Details
+   ul
+    each user,i in Employee_database
+     li(style="padding=10px")=user.username
+     li="First Name : "+ user.first_name
+     li="Last Name : "+ user.last_name
+     li=user.Half_Pay_Credits.n
+  a(href="/leave") Request Leave
+  li.dropdown.btn.btn-default
+  span.glyphicon.glyphicon-th-list
+    |  Select 
+    span.caret
+  ul.dropdown-menu.dropdown-toggle(data-toggle="dropdown")
+    li
+      a(href="#") action
+    li 
+      a(href="#") another action 
    
