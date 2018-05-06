@@ -38,36 +38,37 @@ const UserDetail = new Schema({
 	username:String,
 	password:String,
 	name:String,
-	last_name:String,
-	Gender:String,
-	DOJoining: String,
-	Department:String,
-	Post_Held:String,
-	Place:String,
-	Casual_leave_credits:{
-		n:String,
-		active_now:String
+	
+	gender:String,
+	doj: String,
+	department:String,
+	position:String,
+	room:String,
+	casual:{
+		credits:String
+		
 	},
-	Half_Pay_Credits:{
-		n:String,
-		active_now:String
+	halfpay:{
+		halfpay:String,
+		//active_now:String
 	},
-	earned_leave:{
-		n:String,
-		active_now:String
+	earned:{
+		credits:String,
+		count:String,
+		excess:String
 	},
-	comuted_earned_left:String,
+	commuted:{count : String}
 	earned_left:String,
-	vacation_leave_count:String,
-	leave_not_due_left:String,
-	Children:[{name:String,age:String,DOB:String}],
+	vacation:{count:String},
+	notdue:{count:String},
+	children:[{name:String,age:String,dob:String}],
 	Num_Children:String,
-	miscarriage_leaves_left:String,
-	Maternity_leave_credit:String,
-	Paternity_leave:{credit:String,max_num:String},
-	Child_Adop_Leave:String,
-	Child_care_leave:{credit:String,max_num:String},
-	Extraordinary_leave:{active_now:String,Years_left:String}
+	maternity:{credits:String},
+	paternity:{credits:String,spells:String},
+	adoption:{credits:String},
+	careleave:{credits:String,spells:String},
+	extraordinary:{days:String},
+	//Extraordinary_leave:{active_now:String,Years_left:String}
 });
 
 
@@ -357,33 +358,30 @@ else{
         // Hash the password using SHA1 algorithm.
         newUser.password = req.body.psw;
         newUser.name="Praaa";
-        newUser.Gender="M";
-        newUser.DOJoining="19-2-2016";
-        newUser.Department="CSE",
-        newUser.Post_Held="Assistant Prof",
-        newUser.Place="F402",
-        newUser.Casual_leave_credits.n="5";
-        newUser.Casual_leave_credits.active_now="0";
-        newUser.Half_Pay_Credits.n="10";
-        newUser.Half_Pay_Credits.active_now="0";
-        newUser.earned_leave.n="15";
-        newUser.earned_leave.active_now="0";
-        newUser.comuted_earned_left="240";
-        newUser.earned_left="180";
-        newUser.vacation_leave_count="0";
-        newUser.leave_not_due_left="0";
-        children=[{"name":"priya","age":"20","DOB":"Sat May 05 2018 21:12:30 GMT+0530 (IST)"}]
-        newUser.Children=children;
-        newUser.Num_Children="1";
-        newUser.miscarriage_leaves_left="45";
-        newUser.Maternity_leave_credit="180";
-        newUser.Paternity_leave.credit="15";
-        newUser.Paternity_leave.max_num="3";
-        newUser.Child_Adop_Leave="180";
-        newUser.Child_care_leave.credit="730";
-        newUser.Child_care_leave.max_num="6";
-        newUser.Extraordinary_leave.active_now="0";
-        newUser.Extraordinary_leave.Years_left="5";
+        newUser.gender="M";
+        newUser.doj="19-2-2016";
+        newUser.department="CSE",
+        newUser.position="Assistant Prof",
+        newUser.room="F402",
+        newUser.casual.credits="5";
+        newUser.halfpay.credits="10";
+        newUser.commuted.count="0";
+        newUser.earned.credits="15";
+        newUser.earned.count="0";
+        newUser.earned.excess="0";
+        newUser.vacation.count="0";
+        newUser.notdue.count="0";
+        children=[{"name":"priya","age":"20","DOB":"Sat May 05 2018 21:12:30 GMT+0530 (IST)"}];
+        newUser.children=children;
+        newUser.maternity.maternity="180";
+        newUser.paternity.credits="15";
+        newUser.paternity.spells="0"
+        newUser.adoption.credits="180";
+        newUser.careleave.credits="730";
+        newUser.careleave.spells="3"
+        newUser.extraordinary.days="0";
+
+
         console.log(newUser.username);
 
         console.log(newUser.password);
