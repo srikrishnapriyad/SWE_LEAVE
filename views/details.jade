@@ -10,9 +10,9 @@ html
    ul
     each user,i in employee
      li(style="padding=10px")=user.username
-     li="First Name : "+ user.first_name
-     li="Last Name : "+ user.last_name
-     li=user.Half_Pay_Credits.n
+     li="First Name : "+ user.name
+     li="Casual Leave : "+ user.casual.credits
+     
   a(href="/leave") Request Leave
   li.dropdown.btn.btn-default
   span.glyphicon.glyphicon-th-list
