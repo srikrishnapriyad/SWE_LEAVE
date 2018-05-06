@@ -208,7 +208,32 @@ app.post('/adminDashboard',function(req,res){
         newUser.username = req.body.uname; 
         // Hash the password using SHA1 algorithm.
         newUser.password = req.body.psw;
-        
+        newUser.first_name="xxxxxx";
+        newUser.last_name="xxxxxxxx";
+        newUser.Gender="xxxxxxxx";
+        newUser.DOJoining="19-2-2016";
+        newUser.Casual_leave_credits.n="5";
+        newUser.Casual_leave_credits.active_now="0";
+        newUser.Half_Pay_Credits.n="10";
+        newUser.Half_Pay_Credits.active_now="0";
+        newUser.earned_leave.n="15";
+        newUser.earned_leave.active_now="0";
+        newUser.comuted_earned_left="240";
+        newUser.earned_left="180";
+        newUser.vacation_leave_count="0";
+        newUser.leave_not_due_left="0";
+        children=[{"name":"priya","age":"20","DOB":"Sat May 05 2018 21:12:30 GMT+0530 (IST)"}]
+        newUser.Children=children;
+        newUser.Num_Children="1";
+        newUser.miscarriage_leaves_left="45";
+        newUser.Maternity_leave_credit="180";
+        newUser.Paternity_leave.credit="15";
+        newUser.Paternity_leave.max_num="3";
+        newUser.Child_Adop_Leave="180";
+        newUser.Child_care_leave.credit="730";
+        newUser.Child_care_leave.max_num="6";
+        newUser.Extraordinary_leave.active_now="0";
+        newUserExtraordinary_leave.Years_left="5";
         console.log(newUser.username);
 
         console.log(newUser.password);
