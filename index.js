@@ -1,18 +1,23 @@
 const express= require ('express');
-var popupS = require('popups');
 const app = express();
-var session = require('express-session');
+var session = require('client-sessions');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.get('/',(req,res)=> res.sendFile('index.html',{root:__dirname}));
 
-
+app.use(session({
+  cookieName: 'session',
+  secret: 'random_string_goes_here',
+  duration: 30 * 60 * 1000,
+  activeDuration: 5 * 60 * 1000,
+}));
 
 const port = process.env.PORT || 4000;
 app.listen(port,()=> console.log('App listening on port',+port));
 
 app.set('view engine','jade');
+app.use(express.static('Login_v2'));
 app.use(express.static('Login_v13'));
 
 app.use("/css", express.static(__dirname + '/public/css'));
@@ -22,7 +27,7 @@ app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redi
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); //redirect to css bootstrap
 app.use(express.static(__dirname +'Login_v2'));// used to acess the files in a directory
 
- 
+ //var sess;
 /* MONGOOSE SETUP */
 
 const mongoose = require('mongoose');
@@ -31,6 +36,11 @@ mongoose.connect('mongodb://localhost/MyDatabase');
 
 const Schema= mongoose.Schema;
 const Schema2=mongoose.Schema;
+
+const Admin = new Schema2({
+	username:String,
+	password:String
+});
 
 const UserDetail = new Schema({
 
@@ -69,8 +79,22 @@ const UserDetail = new Schema({
 	//Extraordinary_leave:{active_now:String,Years_left:String}
 });
 
+const Schema3=mongoose.Schema;
+
+const Requests = new Schema3({
+	username : String,
+	name:String,
+	leavetype:String,
+	startdate:String,
+	enddate:String,
+	comment:String
+});
+
 
 const UserDetails = mongoose.model('employee',UserDetail,'employee');
+const Admin1 = mongoose.model('admin', Admin,'admin');
+const Requests1=mongoose.model('requests',Requests,'requests');
+
 //const UserCredentails = mongoose.model('staffInfo',UserCred,'staffInfo');
 /* PASSPORT SETUP */
 
@@ -112,6 +136,7 @@ UserDetails.findOne({
 	{
 		return done(null,false);
 	}
+	
 	return done(null, user);
 }
 
@@ -119,12 +144,46 @@ UserDetails.findOne({
 }
 	));
 
+// used to serialize the user for the session
+passport.serializeUser(function(user, done) {
+    done(null, user.id); 
+   // where is this user.id going? Are we supposed to access this anywhere?
+});
 
+// used to deserialize the user
+passport.deserializeUser(function(id, done) {
+    UserDetails.findById(id, function(err, user) {
+        done(err, user);
+    });
+})
+/*
+app.get('/',function(req,res){
+sess = req.session;
+//Session set when user Request our app via URL
+if(sess.username) {
+
+    res.redirect('/details',{root:__dirname});
+} 
+else {
+    res.render('index.html');
+}
+});
+
+*/
 
 // Staff Login //
 app.post('/login',
 passport.authenticate('local'),
 function(req,res){
+
+
+	UserDetails.findOne({username:req.body.username},function(err,user){
+	//sess = req.session;
+	req.session.user = user;
+}
+
+);
+	
 	var User=new UserDetails();
 	// confirm that user typed same password twice
 		if (User.password !== req.body.passwordConf) {
@@ -177,16 +236,16 @@ app.post('/leave', function(req,res){
 
 	switch (a) {
 		case 'casual':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:req.session.user.username}, function (err, doc) {
 				if (doc.casual.credits - num_days < 0) {
 					// show a pop-up
 				}
-				doc.doc.casual.credits -= num_days;
+				doc.casual.credits -= num_days;
 				doc.save();
 			});
 			break;
 		case 'halfpay':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				if (doc.halfpay.credits - num_days < 0) {
 					// show a pop-up, not due leaves
 				}
@@ -195,7 +254,7 @@ app.post('/leave', function(req,res){
 			});
 			break;
 		case 'commute':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				if (doc.commuted.count + doc.earned.count + num_days > 240) {
 					// show a pop-up
 				}
@@ -207,43 +266,43 @@ app.post('/leave', function(req,res){
 			});
 			break;
 		case 'earned':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				doc.earned.credits -= num_days;
 				doc.earned.count += num_days;
 			});
 			break;
 		case 'vacation':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				doc.earned.credits -= num_days/2;
 				doc.vacation.count += num_days;
 			});
 			break;
 		case 'maternity':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				doc.Maternity_leave_credit -= req.body.number;
 				doc.save();
 			});
 			break;
 		case 'paternity':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				doc.Paternity_leave.credit -= req.body.number;
 				doc.save();
 			});
 			break;
 		case 'adoption':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				doc.Child_Adop_Leave -= req.body.number;
 				doc.save();
 			});
 			break;
 		case 'child_care':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				doc.Child_care_leave.credit -= req.body.number;
 				doc.save();
 			});
 			break;
 		case 'extraordinary':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+			UserDetails.findOne ({username:'nraravind@iith.ac.in'}, function (err, doc) {
 				doc.Extraordinary_leave.active_now -= req.body.number;
 				doc.save();
 			});
@@ -362,7 +421,7 @@ else{
         newUser.password = req.body.psw;
         newUser.name="Praaa";
         newUser.gender="M";
-        newUser.doj="19-2-2016";
+        newUser.doj=Date();
         newUser.department="CSE",
         newUser.position="Assistant Prof",
         newUser.room="F402",
