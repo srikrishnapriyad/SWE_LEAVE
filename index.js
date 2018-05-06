@@ -44,6 +44,40 @@ const UserDetail = new Schema({
 	password : String
 });
 
+const DummyGod= new Schema3({
+
+	username:String,
+	password:String,
+	first_name:String,
+	last_name:String,
+	Gender:String,
+	DOJoining: String,
+	Casual_leave_credits:{
+		n:String,
+		active_now:String
+	},
+	Half_Pay_Credits:{
+		n:String,
+		active_now:String
+	},
+	earned_leave:{
+		n:String,
+		active_now:String
+	},
+	comuted_earned_left:String,
+	earned_left:String,
+	vacation_leave_count:String,
+	leave_not_due_left:String,
+	Children:[{name:String,age:String,DOB:String}],
+	Num_Children:String,
+	miscarriage_leaves_left:String,
+	Maternity_leave_credit:String,
+	Paternity_leave:{credit:String,max_num:String},
+	Child_Adop_Leave:String,
+	Child_care_leave:{credit:String,max_num:String},
+	Extraordinary_leave:{active_now:String,Years_left:String}
+});
+
 const UserDetails = mongoose.model('userInfo',UserDetail,'userInfo');
 const UserCredentails = mongoose.model('staffInfo',UserCred,'staffInfo');
 /* PASSPORT SETUP */
