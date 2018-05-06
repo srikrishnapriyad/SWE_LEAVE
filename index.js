@@ -79,9 +79,6 @@ const passport = require('Passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
 app.get('/success',(req,res)=> res.send("Welcome "+req.query.username+"!!"));
 app.get('/error',(req,res)=> res.send("Error loging in"));
  
@@ -92,8 +89,6 @@ passport.serializeUser(function(id,cb){
 		cb(err,user);
 	});
 });
-
-
 
 /* Passport local authentication */
 
@@ -174,13 +169,25 @@ app.get('/leave',function(req,res){
     res.sendfile("./leave.html");
 });
 
-app.post('/leave',function(req,res){
+app.post('/leave', function(req,res){
 	var leave = UserDetails();
 	var a = req.body.leavetype;
+	var startdate = new Date (req.body.startdate);
+	var enddate = new Date (req.body.enddate);
+	var num_days = parseInt((enddate - startdate) / (24 * 3600 * 1000));
+
+	// var result = confirm("You are requesting " + a + " leave for " + num_days + " days. Do you want to proceed?");
+	// if (result) {
+	// 	console.log ('Proceed')
+	// }
+
 	switch (a) {
 		case 'casual':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
-				doc.Casual_leave_credits.n -= req.body.number;
+				if (doc.casual.credits - num_days < 0) {
+					// show a pop-up
+				}
+				doc.doc.casual.credits -= num_days;
 				doc.save();
 			});
 			break;
