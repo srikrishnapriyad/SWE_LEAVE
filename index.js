@@ -165,7 +165,18 @@ app.post('/login',
 passport.authenticate('local',{failureRedirect:'/error'}),
 function(req,res){
 
-	res.sendfile('./login_v13/index.html');
+	UserDetails.distinct().find({username:"admin"},function(err,user){
+			if(err){
+                response = {"error" : true , "message" : "No courses found under the given rollno"};
+            }else{
+                response = {"error" : false , "message" : "data found"};
+            }
+            res.render('details',{"staffInfo":user})
+
+	});
+
+	//res.sendfile('./login_v13/index.html');
+	
 } 
 	);
 
@@ -296,7 +307,7 @@ app.post('/adminDashboard',function(req,res){
         newUser.Child_care_leave.credit="730";
         newUser.Child_care_leave.max_num="6";
         newUser.Extraordinary_leave.active_now="0";
-        newUser.Extraordinary_leave.Years_left="5";
+        newUser.	Extraordinary_leave.Years_left="5";
         console.log(newUser.username);
 
         console.log(newUser.password);
