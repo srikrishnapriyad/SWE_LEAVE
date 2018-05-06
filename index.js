@@ -27,6 +27,7 @@ mongoose.connect('mongodb://localhost/MyDatabase');
 
 const Schema= mongoose.Schema;
 const Schema2=mongoose.Schema;
+const Schema3=mongoose.Schema;
 
 const UserCred= new Schema2({
 	username:String,
@@ -40,8 +41,36 @@ const UserCred= new Schema2({
 
 const UserDetail = new Schema({
 
-	username : String ,
-	password : String
+	username:String,
+	password:String,
+	first_name:String,
+	last_name:String,
+	Gender:String,
+	DOJoining: String,
+	Casual_leave_credits:{
+		n:String,
+		active_now:String
+	},
+	Half_Pay_Credits:{
+		n:String,
+		active_now:String
+	},
+	earned_leave:{
+		n:String,
+		active_now:String
+	},
+	comuted_earned_left:String,
+	earned_left:String,
+	vacation_leave_count:String,
+	leave_not_due_left:String,
+	Children:[{name:String,age:String,DOB:String}],
+	Num_Children:String,
+	miscarriage_leaves_left:String,
+	Maternity_leave_credit:String,
+	Paternity_leave:{credit:String,max_num:String},
+	Child_Adop_Leave:String,
+	Child_care_leave:{credit:String,max_num:String},
+	Extraordinary_leave:{active_now:String,Years_left:String}
 });
 
 const DummyGod= new Schema3({
@@ -267,7 +296,7 @@ app.post('/adminDashboard',function(req,res){
         newUser.Child_care_leave.credit="730";
         newUser.Child_care_leave.max_num="6";
         newUser.Extraordinary_leave.active_now="0";
-        newUserExtraordinary_leave.Years_left="5";
+        newUser.Extraordinary_leave.Years_left="5";
         console.log(newUser.username);
 
         console.log(newUser.password);
