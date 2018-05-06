@@ -1,5 +1,5 @@
 const express= require ('express');
-
+var popupS = require('popups');
 const app = express();
 var session = require('express-session');
 const bodyParser = require('body-parser');
@@ -175,11 +175,6 @@ app.post('/leave', function(req,res){
 	var enddate = new Date (req.body.enddate);
 	var num_days = parseInt((enddate - startdate) / (24 * 3600 * 1000));
 
-	// var result = confirm("You are requesting " + a + " leave for " + num_days + " days. Do you want to proceed?");
-	// if (result) {
-	// 	console.log ('Proceed')
-	// }
-
 	switch (a) {
 		case 'casual':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
@@ -192,32 +187,35 @@ app.post('/leave', function(req,res){
 			break;
 		case 'halfpay':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
-				doc.Half_Pay_Credits.n -= req.body.number;
+				if (doc.halfpay.credits - num_days < 0) {
+					// show a pop-up, not due leaves
+				}
+				doc.halfpay.credits -= num_days;
 				doc.save();
 			});
 			break;
 		case 'commute':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
-				doc.comuted_earned_left -= req.body.number;
+				if (doc.commuted.count + doc.earned.count + num_days > 240) {
+					// show a pop-up
+				}
+				if (doc.commuted.count + num_days > 180) {
+					// show a pop-up
+				}
+				doc.commuted.count += num_days;
 				doc.save();
 			});
 			break;
 		case 'earned':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
-				doc.earned_left -= req.body.number;
-				doc.save();
+				doc.earned.credits -= num_days;
+				doc.earned.count += num_days;
 			});
 			break;
 		case 'vacation':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
-				doc.earned_left -= req.body.number;
-				doc.save();
-			});
-			break;
-		case 'no_due':
-			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
-				doc.leave_not_due_left -= req.body.number;
-				doc.save();
+				doc.earned.credits -= num_days/2;
+				doc.vacation.count += num_days;
 			});
 			break;
 		case 'maternity':
