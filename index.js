@@ -192,12 +192,15 @@ app.get('/leave',function(req,res){
     res.sendfile("./leave.html");
 });
 
-app.post('/leave',function(req,res){
+app.post('/leave', function(req,res){
 	var leave = UserDetails();
 	var a = req.body.leavetype;
 	switch (a) {
 		case 'casual':
 			UserDetails.findOne ({username:'Priya'}, function (err, doc) {
+				if (doc.Casual_leave_credits.n - req.body.number < 0) {
+					// show a pop-up
+				}
 				doc.Casual_leave_credits.n -= req.body.number;
 				doc.save();
 			});
