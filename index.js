@@ -1,10 +1,12 @@
 const express= require ('express');
 const app = express();
-var session = require('client-sessions');
+
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.get('/',(req,res)=> res.sendFile('index.html',{root:__dirname}));
+
+var session = require('client-sessions');
 
 app.use(session({
   cookieName: 'session',
@@ -27,7 +29,6 @@ app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redi
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); //redirect to css bootstrap
 app.use(express.static(__dirname +'Login_v2'));// used to acess the files in a directory
 
- //var sess;
 /* MONGOOSE SETUP */
 
 const mongoose = require('mongoose');
@@ -90,12 +91,10 @@ const Requests = new Schema3({
 	comment:String
 });
 
-
-const UserDetails = mongoose.model('employee',UserDetail,'employee');
+const UserDetails = mongoose.model('employee', UserDetail,'employee');
 const Admin1 = mongoose.model('admin', Admin,'admin');
-const Requests1=mongoose.model('requests',Requests,'requests');
+const Requests1=mongoose.model('requests', Requests,'requests');
 
-//const UserCredentails = mongoose.model('staffInfo',UserCred,'staffInfo');
 /* PASSPORT SETUP */
 
 const passport = require('Passport');
@@ -106,9 +105,7 @@ app.get('/success',(req,res)=> res.send("Welcome "+req.query.username+"!!"));
 app.get('/error',(req,res)=> res.send("Error loging in"));
  
 passport.serializeUser(function(id,cb){
-
 	UserDetails.findById(id,function(err,user){
-
 		cb(err,user);
 	});
 });
@@ -116,33 +113,23 @@ passport.serializeUser(function(id,cb){
 /* Passport local authentication */
 
 const LocalStrategy = require('passport-local').Strategy;
+passport.use(new LocalStrategy(function(username,password,done) {
 
-passport.use(new LocalStrategy(
+	UserDetails.findOne({username:username},function(err,user){
 
-function(username,password,done){
-
-UserDetails.findOne({
-
-	username:username
-},function(err,user){
-
-	if(err){
-		return done(err);
-	}
-	if(!user){
-		return done(null,false);
-	}
-	if(user.password!=password)
-	{
-		return done(null,false);
-	}
-	
-	return done(null, user);
-}
-
-);
-}
-	));
+		if (err){
+			return done(err);
+		}
+		if (!user){
+			return done(null,false);
+		}
+		if (user.password!=password)
+		{
+			return done(null,false);
+		}
+		return done(null, user);
+	});
+}));
 
 // used to serialize the user for the session
 passport.serializeUser(function(user, done) {
@@ -156,84 +143,53 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 })
-/*
-app.get('/',function(req,res){
-sess = req.session;
-//Session set when user Request our app via URL
-if(sess.username) {
-
-    res.redirect('/details',{root:__dirname});
-} 
-else {
-    res.render('index.html');
-}
-});
-
-*/
 
 // Staff Login //
 app.post('/login',
-passport.authenticate('local'),
-function(req,res){
-
-
+passport.authenticate('local'), function(req,res) {
 	UserDetails.findOne({username:req.body.username},function(err,user){
-	//sess = req.session;
 	req.session.user = user;
-}
-
-);
+});
 	
-	var User=new UserDetails();
-	// confirm that user typed same password twice
-		if (User.password !== req.body.passwordConf) {
-				var err = new Error('Password Wrong');
-				err.status = 400;
-				res.send("password wrong");
-				return next(err);
-		}
-		else if(User.username !==req.body.Username){
-			var err = new Error('Usernames wrong');
-				err.status = 400;
-				res.send("Username wrong");
-				return next(err);
+var User=new UserDetails();
+// confirm that user typed same password twice
+	if (User.password !== req.body.passwordConf) {
+			var err = new Error('Password Wrong');
+			err.status = 400;
+			res.send("password wrong");
+			return next(err);
+	} else if(User.username !==req.body.Username){
+		var err = new Error('Usernames wrong');
+			err.status = 400;
+			res.send("Username wrong");
+			return next(err);
 
-		}
+	} else{	
+		UserDetails.distinct().find({username:req.body.username},function(err,user){
+				if(err){
+		            response = {"error" : true , "message" : "No courses found under the given rollno"};
+		        }else{
+		            response = {"error" : false , "message" : "data found"};
+		        }
+		        res.render('details',{"employee":user})
 
-	else{	
-	UserDetails.distinct().find({username:req.body.username},function(err,user){
-			if(err){
-                response = {"error" : true , "message" : "No courses found under the given rollno"};
-            }else{
-                response = {"error" : false , "message" : "data found"};
-            }
-            res.render('details',{"employee":user})
-
-	});
-}
-
-	//res.sendfile('./login_v13/index.html');
-	
-} 
-	);
-
+		});
+}});
 
 app.get('/login',function(req,res){
-
     res.sendfile("./student.html");
 });
 app.get('/leave',function(req,res){
-
     res.sendfile("./leave.html");
 });
 
-app.post('/leave', function(req,res){
-	var leave = UserDetails();
+app.post('/leave', function(req,res) {
 	var a = req.body.leavetype;
 	var startdate = new Date (req.body.startdate);
 	var enddate = new Date (req.body.enddate);
 	var num_days = parseInt((enddate - startdate) / (24 * 3600 * 1000));
 	var success = true;
+	
 	switch (a) {
 		case 'casual':
 			UserDetails.findOne ({username:req.session.user.username}, function (err, doc) {
@@ -398,7 +354,7 @@ app.post('/updateUser',function(req,res){
 	addCred.save(function(err){
         // save() will run insert() command of MongoDB.
         // it will add new data in collection.
-        console.log("did u get fuckedup");
+        console.log("did u get ");
         if(err) {
             response = {"error" : true,"message" : err};
         } else {
@@ -493,7 +449,7 @@ else{
        newUser.save(function(err){
         // save() will run insert() command of MongoDB.
         // it will add new data in collection.
-        console.log("did u get fuckedup");
+        console.log("did u get");
         if(err) {
             response = {"error" : true,"message" : err};
         } else {
