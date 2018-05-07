@@ -228,7 +228,7 @@ app.get('/leave',function(req,res){
 });
 
 app.post('/leave', function(req,res){
-	var leave = UserDetails();
+	var leave = new UserDetails();
 	var a = req.body.leavetype;
 	var startdate = new Date (req.body.startdate);
 	var enddate = new Date (req.body.enddate);
@@ -254,7 +254,7 @@ app.post('/leave', function(req,res){
 				if (doc.halfpay.credits - num_days < 0) {
 					// show a pop-up - it will be cut from no due
 					if (proceed) {
-						var newRequest = new Requests ();
+						var newRequest = new Requests1();
 						newRequest.username = req.session.user.username;
 						newRequest.name = req.session.user.name;
 						newRequest.leavetype = 'nodue';
@@ -331,9 +331,11 @@ app.post('/leave', function(req,res){
 			break;
 		default:
 			console.log ('Invalid Leave Type');
-
-		if (success) {
-			var newRequest = new Requests ();
+			break;
+	}
+	if (success) {
+			console.log(" I am coming here");
+			var newRequest = new Requests1 ();
 			newRequest.username = req.session.user.username;
 			newRequest.name = req.session.user.name;
 			newRequest.leavetype = a;
@@ -348,9 +350,6 @@ app.post('/leave', function(req,res){
 				}
 			});
 		}
-		
-
-	}
 });
 
 //Admin Login // 
