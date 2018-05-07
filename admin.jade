@@ -1,0 +1,12 @@
+doctype html
+html
+ head
+  link(href='/css/jade_style.css', rel='stylesheet')
+ title=title
+ body
+  h1 My Details
+   ul
+    each user,i in requests
+     li="Name : "+ user.name
+     li="Leave Type : "+ user.leavetype
+   
