@@ -224,9 +224,9 @@ app.post('/leave', function(req,res) {
 			UserDetails.findOne ({username:req.session.user.username}, function (err, doc) {
 				if (doc.casual.credits - num_days < 0) {
 					// show a pop-up
-					if (!proceed) {
-						success = false;
-					}
+					// if (!proceed) {
+					// 	success = false;
+					// }
 				}
 				/* Action
 				doc.casual.credits -= num_days;
