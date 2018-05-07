@@ -1,0 +1,17 @@
+doctype html
+html
+ head
+  link(href='/css/admin_style.css', rel='stylesheet')
+ title=title
+ body
+  h1 My Details
+   ul
+    each docs,i in requests
+     li="Name : "+docs.name+" Leave Type = "+docs.leaveType+" : From date - "+docs.startdate+" To date - "+docs.enddate
+     form(action="/accept" method="post")
+      input(value=docs._id type="hidden" name="reqid")
+      input(type="submit" value="Accept")
+      input(type="submit" value="Reject")
+    
+     
+   

@@ -33,6 +33,7 @@ app.use(express.static(__dirname +'Login_v2'));// used to acess the files in a d
 const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/MyDatabase');
+var db = mongoose.connect('mongodb://localhost/MyDatabase');
 
 const Schema= mongoose.Schema;
 const Schema2=mongoose.Schema;
@@ -170,6 +171,36 @@ else {
 });
 
 */
+// AdminAccept
+app.post('/accept',function(req,res){
+
+var leavetype;
+var username;
+var num_days;
+var startdate, enddate;
+
+var reqid= req.body.reqid;
+Requests1.findOne ({_id:reqid}, function (err, reqdoc) {
+	leavetype = reqdoc.leavetype;
+	username = reqdoc.username;
+	startdate = new Date (reqdoc.startdate);
+	enddate = new Date (reqdoc.enddate);
+	num_days = parseInt ((enddate - startdate) / (24 * 3600 * 1000));
+	switch (leavetype) {
+		case 'casual':
+			UserDetails.findOne ({username: username}, function (err, userdoc) {
+				userdoc.casual.credits -= num_days;
+				userdoc.save();
+			})
+	}
+	
+})
+
+console.log(req.body);
+
+
+});
+
 
 // Staff Login //
 app.post('/login',
@@ -358,9 +389,17 @@ var path = require('path');// This is used to resolve the path issues as we can 
 
 app.post('/adminLogin',
 passport.authenticate('local',{failureRedirect:'/error'}),
-function(req,res){
+function(req,res,next){
 
-	res.sendfile(path.resolve('admin_fast.html'));// using path to connec to the required fille 
+
+Requests1.find({}, function(err, docs){
+		if(err) res.json(err);
+		else    res.render('admin', {requests: docs});
+	});
+
+
+	
+	//res.sendfile(path.resolve('admin_fast.html'));// using path to connec to the required fille 
 }
 	);
 
