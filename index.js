@@ -168,14 +168,28 @@ app.post('/accept',function(req,res){
 				})
 				Requests1.remove({ _id: reqid}, function(err) {
 				    if (!err) {
-				            message.type = 'notification!';
+				    	console.log ('Request removed'); // todo: move requests
 				    }
 				    else {
-				            message.type = 'error';
+				    	console.log ('Request not removed. Check the code');
 				    }
 				});
 				break;
-		}	
+			case 'halfpay':
+				UserDetails.findOne ({username: username}, function (err, userdoc) {
+					userdoc.halfpay.credits -= num_days;
+					userdoc.save();
+				})
+				Requests1.remove({ _id: reqid}, function(err) {
+				    if (!err) {
+				    	console.log ('Request removed'); // todo: move requests
+				    }
+				    else {
+				    	console.log ('Request not removed. Check the code');
+				    }
+				});
+				break;
+			}	
 	});
 
 });
@@ -236,10 +250,6 @@ app.post('/leave', function(req,res) {
 					// 	success = false;
 					// }
 				}
-				/* Action
-				doc.casual.credits -= num_days;
-				doc.save();
-				*/
 			});
 			break;
 		case 'halfpay':
