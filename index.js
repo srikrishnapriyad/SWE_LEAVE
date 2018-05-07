@@ -166,6 +166,14 @@ app.post('/accept',function(req,res){
 					userdoc.casual.credits -= num_days;
 					userdoc.save();
 				})
+				Requests1.remove({ _id: reqid}, function(err) {
+				    if (!err) {
+				            message.type = 'notification!';
+				    }
+				    else {
+				            message.type = 'error';
+				    }
+				});
 				break;
 		}	
 	});
